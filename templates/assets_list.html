@@ -1,4 +1,3 @@
-{# templates/assets_list.html #}
 {% extends "base.html" %}
 {% block title %}Activos — Ciber-Riesgos{% endblock %}
 
@@ -13,8 +12,17 @@
 <table class="table table-striped">
   <thead>
     <tr>
-      <th>ID</th><th>Nombre</th><th>Tipo</th>
-      <th>Conf</th><th>Int</th><th>Disp</th><th>Acciones</th>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Tipo</th>
+      <th>Conf</th>
+      <th>Int</th>
+      <th>Disp</th>
+      <th>Owner</th>
+      <th># Riesgos</th>
+      <th>Unidades</th>
+      <th>Etiquetas</th>
+      <th>Acciones</th>
     </tr>
   </thead>
   <tbody>
@@ -26,21 +34,29 @@
         <td>{{ a.confidencialidad }}</td>
         <td>{{ a.integridad }}</td>
         <td>{{ a.disponibilidad }}</td>
+        <td>{{ a.owner_name }}</td>
+        <td>{{ a.num_riesgos }}</td>
+        <td>{{ a.business_units|join(", ") or "—" }}</td>
+        <td>{{ a.labels|join(", ")         or "—" }}</td>
         <td>
-          <a href="{{ url_for('assets.delete_asset', asset_id=a.id) }}"
-             class="btn btn-sm btn-danger">
-            Eliminar
-          </a>
+          <form method="post"
+                action="{{ url_for('assets.delete_asset', asset_id=a.id) }}"
+                style="display:inline">
+            <button type="submit"
+                    class="btn btn-sm btn-danger"
+                    onclick="return confirm('¿Seguro que quieres eliminar este activo?');">
+              Eliminar
+            </button>
+          </form>
         </td>
       </tr>
     {% else %}
       <tr>
-        <td colspan="7" class="text-center">No hay activos registrados.</td>
+        <td colspan="11" class="text-center">No hay activos registrados.</td>
       </tr>
     {% endfor %}
   </tbody>
 </table>
-
 <!-- Modal Agregar Activo -->
 <div class="modal fade" id="modalAddAsset" tabindex="-1">
   <div class="modal-dialog modal-lg">
@@ -152,11 +168,6 @@
                       <option value="{{ tag.id }}">{{ tag.name }}</option>
                     {% endfor %}
                   </select>
-                </div>
-                <div class="col-md-6">
-                  <p class="text-muted">
-                    Aquí podrías añadir más campos de clasificación si lo necesitas.
-                  </p>
                 </div>
               </div>
             </div>

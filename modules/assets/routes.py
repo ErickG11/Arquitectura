@@ -30,7 +30,7 @@ def get_all_assets_page():
       labels=labels
     )
 
-@assets_bp.route("/delete/<int:asset_id>")
+@assets_bp.route("/delete/<int:asset_id>", methods=["GET","POST"])
 def delete_asset(asset_id):
     eliminar_activo(asset_id)
     return redirect(url_for("assets.get_all_assets_page"))
