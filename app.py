@@ -108,6 +108,9 @@ def report_download():
     c = canvas.Canvas(pdf_path, pagesize=letter)
     w, h = letter
 
+
+
+
     # Portada
     c.setFont("Helvetica-Bold", 18)
     c.drawCentredString(w/2, h-72, "Informe de Gestión de Riesgos")
