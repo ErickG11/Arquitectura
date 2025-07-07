@@ -1,0 +1,178 @@
+{# templates/assets_list.html #}
+{% extends "base.html" %}
+{% block title %}Activos — Ciber-Riesgos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Activos</h2>
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddAsset">
+    + Agregar Nuevo Activo
+  </button>
+</div>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th><th>Nombre</th><th>Tipo</th>
+      <th>Conf</th><th>Int</th><th>Disp</th><th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for a in activos %}
+      <tr>
+        <td>{{ a.id }}</td>
+        <td>{{ a.nombre }}</td>
+        <td>{{ a.tipo }}</td>
+        <td>{{ a.confidencialidad }}</td>
+        <td>{{ a.integridad }}</td>
+        <td>{{ a.disponibilidad }}</td>
+        <td>
+          <a href="{{ url_for('assets.delete_asset', asset_id=a.id) }}"
+             class="btn btn-sm btn-danger">
+            Eliminar
+          </a>
+        </td>
+      </tr>
+    {% else %}
+      <tr>
+        <td colspan="7" class="text-center">No hay activos registrados.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Modal Agregar Activo -->
+<div class="modal fade" id="modalAddAsset" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form method="post" action="{{ url_for('assets.get_all_assets_page') }}">
+        <div class="modal-header">
+          <h5 class="modal-title">Agregar Nuevo Activo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active"
+                      id="tab-general"
+                      data-bs-toggle="tab"
+                      data-bs-target="#pane-general"
+                      type="button">
+                General
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link"
+                      id="tab-owner"
+                      data-bs-toggle="tab"
+                      data-bs-target="#pane-owner"
+                      type="button">
+                Propietario
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link"
+                      id="tab-class"
+                      data-bs-toggle="tab"
+                      data-bs-target="#pane-class"
+                      type="button">
+                Clasificación
+              </button>
+            </li>
+          </ul>
+
+          <div class="tab-content pt-3">
+            <!-- PESTAÑA GENERAL -->
+            <div class="tab-pane fade show active" id="pane-general">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Nombre</label>
+                  <input name="nombre" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Tipo</label>
+                  <input name="tipo" class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Confidencialidad (1–5)</label>
+                  <input name="confidencialidad"
+                         type="number" min="1" max="5"
+                         class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Integridad (1–5)</label>
+                  <input name="integridad"
+                         type="number" min="1" max="5"
+                         class="form-control" required>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Disponibilidad (1–5)</label>
+                  <input name="disponibilidad"
+                         type="number" min="1" max="5"
+                         class="form-control" required>
+                </div>
+              </div>
+            </div>
+
+            <!-- PESTAÑA PROPIETARIO -->
+            <div class="tab-pane fade" id="pane-owner">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Responsable (Owner)</label>
+                  <select name="owner_id" class="form-select select2-single">
+                    <option value="">-- Ninguno --</option>
+                    {% for u in users %}
+                      <option value="{{ u.id }}">{{ u.full_name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Unidades de Negocio</label>
+                  <select name="business_units"
+                          multiple
+                          class="form-select select2-multiple">
+                    {% for bu in business_units %}
+                      <option value="{{ bu.id }}">{{ bu.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- PESTAÑA CLASIFICACIÓN -->
+            <div class="tab-pane fade" id="pane-class">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Etiquetas</label>
+                  <select name="labels"
+                          multiple
+                          class="form-select select2-multiple">
+                    {% for tag in labels %}
+                      <option value="{{ tag.id }}">{{ tag.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <p class="text-muted">
+                    Aquí podrías añadir más campos de clasificación si lo necesitas.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

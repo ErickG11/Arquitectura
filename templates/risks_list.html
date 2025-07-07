@@ -1,0 +1,85 @@
+{# templates/risks_list.html #}
+{% extends "base.html" %}
+{% block title %}Riesgos — Ciber-Riesgos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>Riesgos</h2>
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddRisk">
+    + Agregar Nuevo Riesgo
+  </button>
+</div>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th><th>Amenaza</th><th>Vulnerabilidad</th>
+      <th>Prob</th><th>Imp</th><th>Activo</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in riesgos %}
+    <tr>
+      <td>{{ r.id }}</td>
+      <td>{{ r.amenaza }}</td>
+      <td>{{ r.vulnerabilidad }}</td>
+      <td>{{ r.probabilidad }}</td>
+      <td>{{ r.impacto }}</td>
+      <td>{{ r.activo_nombre }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="text-center">No hay riesgos registrados.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Modal Agregar Riesgo -->
+<div class="modal fade" id="modalAddRisk" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="{{ url_for('risks.list_risks_page') }}">
+        <div class="modal-header">
+          <h5 class="modal-title">Agregar Nuevo Riesgo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Amenaza</label>
+            <input name="amenaza" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Vulnerabilidad</label>
+            <input name="vulnerabilidad" class="form-control" required>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col">
+              <label class="form-label">Probabilidad (1–5)</label>
+              <input name="probabilidad" type="number" min="1" max="5"
+                     class="form-control" required>
+            </div>
+            <div class="col">
+              <label class="form-label">Impacto (1–5)</label>
+              <input name="impacto" type="number" min="1" max="5"
+                     class="form-control" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Activo Relacionado</label>
+            <select name="activo_id" class="form-select select2-single" required>
+              <option value="">-- Selecciona un activo --</option>
+              {% for a in activos %}
+                <option value="{{ a.id }}">{{ a.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary"
+                  data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

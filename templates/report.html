@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Informe de Gestión de Riesgos</title>
+  <style>
+    body { font-family: sans-serif; margin: 1cm; }
+    h1, h2, h3 { color: #333; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 1em; }
+    th, td { border: 1px solid #aaa; padding: 6px; text-align: left; }
+    .page-break { page-break-after: always; }
+    img { max-width: 100%; height: auto; margin-bottom: 1em; }
+  </style>
+</head>
+<body>
+  <!-- Portada -->
+  <h1>Informe de Gestión de Riesgos</h1>
+  <p><strong>Fecha:</strong> {{ fecha }}<br>
+     <strong>Autor:</strong> {{ autor }}</p>
+  <div class="page-break"></div>
+
+  <!-- Resumen ejecutivo -->
+  <h2>Resumen Ejecutivo</h2>
+  <p>Se registraron <strong>{{ activos|length }}</strong> activos y <strong>{{ riesgos|length }}</strong> riesgos.</p>
+  <div class="page-break"></div>
+
+  <!-- Inventario de Activos -->
+  <h2>1. Inventario de Activos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th><th>Nombre</th><th>Tipo</th><th>Valor Crítico</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for a in activos %}
+      <tr>
+        <td>{{ a.id }}</td>
+        <td>{{ a.nombre }}</td>
+        <td>{{ a.tipo }}</td>
+        <td>{{ ((a.confidencialidad + a.integridad + a.disponibilidad)/3)|round(2) }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="4" style="text-align:center">No hay activos registrados.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Gráfica de Valores Críticos -->
+  {% if chart_asset %}
+    <h3>Gráfica de Valor Crítico por Activo</h3>
+    <img src="{{ chart_asset }}" alt="Valores Críticos">
+  {% endif %}
+  <div class="page-break"></div>
+
+   <!-- Matriz de Riesgo Global -->
+  <h2>2. Matriz de Riesgo Global</h2>
+  {% if chart_matrix %}
+    <img src="{{ chart_matrix }}" alt="Matriz de Riesgo Global">
+  {% else %}
+    <p>No hay riesgos para generar matriz.</p>
+  {% endif %}
+  <div class="page-break"></div>
+
+  <!-- Detalle de Riesgos -->
+  <h2>3. Detalle de Riesgos</h2>
+  {% if riesgos %}
+    {% for r in riesgos %}
+      <div style="border:1px solid #ccc; padding:8px; margin-bottom:8px;">
+        <h3>Riesgo {{ loop.index }}: {{ r.amenaza }}</h3>
+        <ul>
+          <li><strong>Activo:</strong> {{ r.activo_nombre }}</li>
+          <li><strong>Vulnerabilidad:</strong> {{ r.vulnerabilidad }}</li>
+          <li><strong>Probabilidad:</strong> {{ r.probabilidad }} / <strong>Impacto:</strong> {{ r.impacto }}</li>
+          <li><strong>Nivel Inicial:</strong> {{ r.probabilidad * r.impacto }}</li>
+          <li><strong>Controles:</strong> {{ r.controles|join(", ") or "Ninguno" }}</li>
+          <li><strong>Nivel Residual:</strong> {{ r.prob_residual or "—" }}</li>
+        </ul>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>No hay riesgos registrados.</p>
+  {% endif %}
+  <div class="page-break"></div>
+
+  <!-- Conclusiones y Recomendaciones -->
+  <h2>4. Conclusiones y Recomendaciones</h2>
+  <ul>
+    <li>Se identificaron <strong>{{ activos|length }}</strong> activos y <strong>{{ riesgos|length }}</strong> riesgos.</li>
+    <li>Los riesgos más críticos requieren acciones inmediatas en sus controles.</li>
+    <li>Recomendación: revisar y actualizar controles periódicamente.</li>
+  </ul>
+  <div class="page-break"></div>
+
+  <!-- Apéndice -->
+  <h2>5. Apéndice</h2>
+  <p>Glosario de términos y controles ISO/IEC 27002:2022 utilizados.</p>
+</body>
+</html>

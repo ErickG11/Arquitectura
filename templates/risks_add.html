@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ "Editar Riesgo" if riesgo else "Nuevo Riesgo" }} — Ciber-Riesgos{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1>{{ "Editar Riesgo" if riesgo else "Nuevo Riesgo" }}</h1>
+  <form method="post" action="{{ url_for('risks.list_risks_page') }}">
+    <div class="mb-3">
+      <label class="form-label">Activo</label>
+      <select name="activo_id" class="form-select">
+        <option value="">-- Seleccionar Activo --</option>
+        {% for a in activos %}
+        <option value="{{ a.id }}" {% if riesgo and (riesgo.activo_id == a.id) %}selected{% endif %}>
+          {{ a.nombre }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Amenaza</label>
+      <input type="text" name="amenaza" class="form-control"
+             value="{{ riesgo.amenaza if riesgo else '' }}" required>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Vulnerabilidad</label>
+      <input type="text" name="vulnerabilidad" class="form-control"
+             value="{{ riesgo.vulnerabilidad if riesgo else '' }}" required>
+    </div>
+    <div class="row g-3 mb-3">
+      <div class="col">
+        <label class="form-label">Probabilidad (1–5)</label>
+        <input type="number" name="probabilidad" min="1" max="5" class="form-control"
+               value="{{ riesgo.probabilidad if riesgo else '' }}" required>
+      </div>
+      <div class="col">
+        <label class="form-label">Impacto (1–5)</label>
+        <input type="number" name="impacto" min="1" max="5" class="form-control"
+               value="{{ riesgo.impacto if riesgo else '' }}" required>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Controles (coma-separados)</label>
+      <input type="text" name="controles" class="form-control"
+             value="{{ riesgo.controles|join(',') if riesgo and riesgo.controles else '' }}">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Riesgo Residual (opcional)</label>
+      <input type="number" name="prob_residual" class="form-control"
+             value="{{ riesgo.prob_residual if riesgo else '' }}">
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a href="{{ url_for('risks.list_risks_page') }}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

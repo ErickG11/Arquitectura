@@ -1,0 +1,19 @@
+{# templates/reports.html #}
+{% extends "base.html" %}
+
+{% block title %}Menú de Reportes{% endblock %}
+
+{% block content %}
+  <div class="container mt-4">
+    <h1>Reportes</h1>
+    <p>Elige una opción:</p>
+    <div class="btn-group" role="group">
+      <a href="{{ url_for('report_view') }}" class="btn btn-primary">
+        Ver Informe en Web
+      </a>
+      <a href="{{ url_for('report_download') }}" class="btn btn-secondary">
+        Descargar Informe en PDF
+      </a>
+    </div>
+  </div>
+{% endblock %}

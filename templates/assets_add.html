@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Agregar Activo</h2>
+  <form method="post" action="{{ url_for('assets.add_asset_page') }}">
+    <div class="form-group">
+      <label for="nombre">Nombre</label>
+      <input class="form-control" id="nombre" name="nombre" required>
+    </div>
+
+    <div class="form-group">
+      <label for="tipo">Tipo</label>
+      <input class="form-control" id="tipo" name="tipo" required>
+    </div>
+
+    <div class="form-group">
+      <label for="confidencialidad">Confidencialidad (1–5)</label>
+      <input class="form-control" id="confidencialidad" name="confidencialidad" type="number" min="1" max="5" required>
+    </div>
+
+    <div class="form-group">
+      <label for="integridad">Integridad (1–5)</label>
+      <input class="form-control" id="integridad" name="integridad" type="number" min="1" max="5" required>
+    </div>
+
+    <div class="form-group">
+      <label for="disponibilidad">Disponibilidad (1–5)</label>
+      <input class="form-control" id="disponibilidad" name="disponibilidad" type="number" min="1" max="5" required>
+    </div>
+
+    <div class="form-group">
+      <label for="owner_id">Responsable (Owner)</label>
+      <select class="form-control" id="owner_id" name="owner_id">
+        <option value="">-- Ninguno --</option>
+        {% for u in users %}
+          <option value="{{ u.id }}">{{ u.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="business_units">Unidades de Negocio</label>
+      <select class="form-control" id="business_units" name="business_units" multiple>
+        {% for b in units %}
+          <option value="{{ b.id }}">{{ b.name }}</option>
+        {% endfor %}
+      </select>
+      <small class="form-text text-muted">(Ctrl+click para múltiples)</small>
+    </div>
+
+    <div class="form-group">
+      <label for="labels">Etiquetas</label>
+      <select class="form-control" id="labels" name="labels" multiple>
+        {% for l in labels %}
+          <option value="{{ l.id }}">{{ l.name }}</option>
+        {% endfor %}
+      </select>
+      <small class="form-text text-muted">(Ctrl+click para múltiples)</small>
+    </div>
+
+    <button class="btn btn-primary">Guardar</button>
+    <a href="{{ url_for('assets.get_all_assets_page') }}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}
