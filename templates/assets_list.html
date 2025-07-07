@@ -13,10 +13,17 @@
 <table class="table table-striped">
   <thead>
     <tr>
-      <th>ID</th><th>Nombre</th><th>Tipo</th>
-      <th>Conf</th><th>Int</th><th>Disp</th>
-      <th>Owner</th><th># Riesgos</th>
-      <th>Unidades</th><th>Etiquetas</th><th>Acciones</th>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Tipo</th>
+      <th>Conf</th>
+      <th>Int</th>
+      <th>Disp</th>
+      <th>Owner</th>
+      <th># Riesgos</th>
+      <th>Unidades</th>
+      <th>Etiquetas</th>
+      <th>Acciones</th>
     </tr>
   </thead>
   <tbody>
@@ -31,7 +38,7 @@
         <td>{{ a.owner_name or "—" }}</td>
         <td>{{ a.num_riesgos }}</td>
         <td>{{ a.business_units|join(", ") or "—" }}</td>
-        <td>{{ a.labels|join(", ") or "—" }}</td>
+        <td>{{ a.labels|join(", ")         or "—" }}</td>
         <td>
           <a href="{{ url_for('assets.edit_asset_page', asset_id=a.id) }}"
              class="btn btn-sm btn-secondary me-1">Editar</a>
@@ -81,6 +88,7 @@
               </button>
             </li>
           </ul>
+
           <div class="tab-content pt-3">
             <!-- GENERAL -->
             <div class="tab-pane fade show active" id="pane-general">
@@ -107,6 +115,7 @@
                 </div>
               </div>
             </div>
+
             <!-- PROPIETARIO -->
             <div class="tab-pane fade" id="pane-owner">
               <div class="row g-3">
@@ -121,7 +130,8 @@
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Unidades de Negocio</label>
-                  <select name="business_units[]" multiple class="form-select select2-multiple">
+                  {# aquí quitamos los corchetes del name #}
+                  <select name="business_units" multiple class="form-select select2-multiple">
                     {% for bu in business_units %}
                       <option value="{{ bu.id }}">{{ bu.name }}</option>
                     {% endfor %}
@@ -129,12 +139,14 @@
                 </div>
               </div>
             </div>
+
             <!-- CLASIFICACIÓN -->
             <div class="tab-pane fade" id="pane-class">
               <div class="row g-3">
                 <div class="col-md-6">
                   <label class="form-label">Etiquetas</label>
-                  <select name="labels[]" multiple class="form-select select2-multiple">
+                  {# idem aquí #}
+                  <select name="labels" multiple class="form-select select2-multiple">
                     {% for tag in labels %}
                       <option value="{{ tag.id }}">{{ tag.name }}</option>
                     {% endfor %}
@@ -142,8 +154,10 @@
                 </div>
               </div>
             </div>
+
           </div>
         </div>
+
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
           <button type="submit" class="btn btn-primary">Guardar</button>
