@@ -67,8 +67,8 @@
             <label class="form-label">Activo Relacionado</label>
             <select name="activo_id" class="form-select select2-single" required>
               <option value="">-- Selecciona un activo --</option>
-              {% for a in activos %}
-                <option value="{{ a.id }}">{{ a.nombre }}</option>
+              {% for a in assets %}
+              <option value="{{ a.id }}">{{ a.nombre }}</option>
               {% endfor %}
             </select>
           </div>

@@ -1,30 +1,28 @@
 import os
-from flask import (
-    Flask, render_template, request,
-    redirect, url_for, send_file
-)
-import matplotlib.pyplot as plt
-import numpy as np
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+from flask       import Flask, render_template, request, redirect, url_for, send_file
+import matplotlib.pyplot    as plt
+import numpy               as np
 
-# 1) Inicializar metadata: Carga todos los models y crea tablas
-from modules.db import Base, engine
-import modules.catalog.models   as _cat    # catálogo
-import modules.assets.models    as _assets # Asset, User, etc.
-import modules.risks.models     as _risks  # Risk
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen       import canvas
+
+# 1) Initialize metadata and tables
+from modules.db               import Base, engine
+import modules.catalog.models 
+import modules.assets.models   # registers Asset & User
+import modules.risks.models    # registers Risk
 Base.metadata.create_all(bind=engine)
 
-# 2) Blueprints y servicios
-from modules.assets.routes  import assets_bp
-from modules.risks.routes   import risks_bp
-from modules.assets.service import lista_activos
-from modules.risks.service  import lista_riesgos
+# 2) Blueprints and services
+
+from modules.assets.routes    import assets_bp
+from modules.risks.routes     import risks_bp
+from modules.assets.service   import lista_activos
+from modules.risks.service    import lista_riesgos
 
 app = Flask(__name__)
 app.register_blueprint(assets_bp, url_prefix="/assets")
 app.register_blueprint(risks_bp,  url_prefix="/risks")
-
 @app.route("/")
 def home():
     return render_template("index.html")

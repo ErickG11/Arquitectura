@@ -1,45 +1,39 @@
 # modules/catalog/models.py
-
-from sqlalchemy import (
-    create_engine, Column, Integer, String, ForeignKey
-)
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
-
-# Reutilizamos tu cadena de conexión
-CONN_STR = (
-    "mssql+pyodbc://@localhost/CiberRiesgosDB"
-    "?driver=ODBC+Driver+17+for+SQL+Server"
-    "&trusted_connection=yes"
-)
-engine = create_engine(CONN_STR, echo=False)
-SessionLocal = sessionmaker(bind=engine)
-Base = declarative_base()
-
-
-class Threat(Base):
-    __tablename__ = "threats"
-    id   = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), nullable=False, unique=True)
-
-
-class Vulnerability(Base):
-    __tablename__ = "vulnerabilities"
-    id   = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), nullable=False, unique=True)
-
-
-class Control(Base):
-    __tablename__ = "controls"
-    id   = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), nullable=False, unique=True)
-
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm  import relationship
+from modules.db      import Base
+from modules.assets.models import asset_business_unit, asset_label
 
 class User(Base):
     __tablename__ = "users"
-    id       = Column(Integer, primary_key=True, index=True)
-    username = Column(String(50), nullable=False, unique=True)
-    full_name= Column(String(100), nullable=False)
+    id        = Column(Integer, primary_key=True, index=True)
+    username  = Column(String(50),  nullable=False, unique=True)
+    full_name = Column(String(100), nullable=False)
 
-# Crea todas las tablas (catálogos + las tuyas existentes)
-Base.metadata.create_all(bind=engine)
+    assets    = relationship("Asset", back_populates="owner")
+
+
+class BusinessUnit(Base):
+    __tablename__ = "business_units"
+    id    = Column(Integer, primary_key=True, index=True)
+    name  = Column(String(100), nullable=False)
+
+    # La relación M2M con Asset
+    assets = relationship(
+        "Asset",
+        secondary=asset_business_unit,
+        back_populates="business_units"
+    )
+
+
+class Label(Base):
+    __tablename__ = "labels"
+    id    = Column(Integer, primary_key=True, index=True)
+    name  = Column(String(100), nullable=False)
+
+    # La relación M2M con Asset
+    assets = relationship(
+        "Asset",
+        secondary=asset_label,
+        back_populates="labels"
+    )

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Editar Activo — Ciber-Riesgos{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Editar Activo</h2>
+  <form method="post" action="{{ url_for('assets.edit_asset_page', asset_id=activo.id) }}">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Nombre</label>
+        <input name="nombre" value="{{ activo.nombre }}" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Tipo</label>
+        <input name="tipo" value="{{ activo.tipo }}" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Confidencialidad (1–5)</label>
+        <input name="confidencialidad" type="number" min="1" max="5"
+               value="{{ activo.confidencialidad }}"
+               class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Integridad (1–5)</label>
+        <input name="integridad" type="number" min="1" max="5"
+               value="{{ activo.integridad }}"
+               class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Disponibilidad (1–5)</label>
+        <input name="disponibilidad" type="number" min="1" max="5"
+               value="{{ activo.disponibilidad }}"
+               class="form-control" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Responsable (Owner)</label>
+        <select name="owner_id" class="form-select select2-single">
+          <option value="">-- Ninguno --</option>
+          {% for u in users %}
+            <option value="{{ u.id }}"
+              {% if activo.owner_id == u.id %} selected {% endif %}>
+              {{ u.full_name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <!-- Si implementas M2M, aquí irían business_units y labels -->
+    </div>
+    <div class="mt-4">
+      <button type="submit" class="btn btn-success">Guardar Cambios</button>
+      <a href="{{ url_for('assets.get_all_assets_page') }}" class="btn btn-secondary">
+        Cancelar
+      </a>
+    </div>
+  </form>
+</div>
+{% endblock %}

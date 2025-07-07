@@ -1,24 +1,11 @@
 # modules/risks/service.py
-
-from modules.db import SessionLocal
+from modules.db        import SessionLocal
 from modules.risks.models import Risk
-from modules.assets.models import Asset
 
 def lista_riesgos() -> list[dict]:
     session = SessionLocal()
-    rows = session.query(Risk).all()
-    result = []
-    for r in rows:
-        activo = session.get(Asset, r.activo_id)
-        result.append({
-            "id": r.id,
-            "amenaza": r.amenaza,
-            "vulnerabilidad": r.vulnerabilidad,
-            "probabilidad": r.probabilidad,
-            "impacto": r.impacto,
-            "activo_id": r.activo_id,
-            "activo_nombre": activo.nombre if activo else None,
-        })
+    rows    = session.query(Risk).all()
+    result  = [r.to_dict() for r in rows]
     session.close()
     return result
 
