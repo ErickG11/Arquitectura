@@ -4,31 +4,27 @@
 
 {% block content %}
 <div class="container assets-section">
-  <div class="section-header">
-    <h2>Activos</h2>
-  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddAsset">
-    + Agregar Nuevo Activo
-  </button>
-</div>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Nombre</th>
-      <th>Tipo</th>
-      <th>Conf</th>
-      <th>Int</th>
-      <th>Disp</th>
-      <th>Owner</th>
-      <th># Riesgos</th>
-      <th>Unidades</th>
-      <th>Etiquetas</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for a in activos %}
+  <!-- Cabecera y botón -->
+  <div class="d-flex justify-content-between align-items-center mb-3 section-header">
+    <h2>Activos</h2>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddAsset">
+      + Agregar Nuevo Activo
+    </button>
+  </div>
+
+  <!-- Tabla de Activos -->
+  <table class="table table-hover table-striped">
+    <thead>
+      <tr>
+        <th>ID</th><th>Nombre</th><th>Tipo</th>
+        <th>Conf</th><th>Int</th><th>Disp</th>
+        <th>Owner</th><th># Riesgos</th>
+        <th>Unidades</th><th>Etiquetas</th><th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in activos %}
       <tr>
         <td>{{ a.id }}</td>
         <td>{{ a.nombre }}</td>
@@ -39,10 +35,12 @@
         <td>{{ a.owner_name or "—" }}</td>
         <td>{{ a.num_riesgos }}</td>
         <td>{{ a.business_units|join(", ") or "—" }}</td>
-        <td>{{ a.labels|join(", ")         or "—" }}</td>
+        <td>{{ a.labels|join(", ") or "—" }}</td>
         <td>
           <a href="{{ url_for('assets.edit_asset_page', asset_id=a.id) }}"
-             class="btn btn-sm btn-secondary me-1">Editar</a>
+             class="btn btn-sm btn-secondary me-1">
+            Editar
+          </a>
           <form method="post"
                 action="{{ url_for('assets.delete_asset', asset_id=a.id) }}"
                 style="display:inline">
@@ -54,15 +52,37 @@
           </form>
         </td>
       </tr>
-    {% else %}
+      {% else %}
       <tr>
         <td colspan="11" class="text-center">No hay activos registrados.</td>
       </tr>
-    {% endfor %}
-  </tbody>
-</table>
+      {% endfor %}
+    </tbody>
+  </table>
 
-<!-- Modal Agregar Activo -->
+  <!-- Bloque informativo elegante -->
+  <div class="section-features mt-5">
+    <div class="feature">
+      <div class="feature-icon">📦</div>
+      <h5>¿Qué son los Activos?</h5>
+      <p>Un activo puede ser cualquier elemento con valor para tu organización: hardware, software, datos o personas. 
+      Este sistema te ayuda a inventariarlos y asignarles atributos de confidencialidad, integridad y disponibilidad.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔍</div>
+      <h5>Tipos de Activos</h5>
+      <p>Clasifica cada activo en categorías (por ejemplo, SERVIDOR, APLICACIÓN, BASE DE DATOS) para facilitar el análisis de riesgos y el cumplimiento normativo.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">⚙️</div>
+      <h5>Valoración y Uso</h5>
+      <p>Asigna niveles 1–5 a sus atributos críticos y analiza cuántos riesgos están relacionados. Así priorizas dónde aplicar controles y protecciones.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal Agregar Activo (sin cambios) -->
 <div class="modal fade" id="modalAddAsset" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -89,7 +109,6 @@
               </button>
             </li>
           </ul>
-
           <div class="tab-content pt-3">
             <!-- GENERAL -->
             <div class="tab-pane fade show active" id="pane-general">
@@ -116,7 +135,6 @@
                 </div>
               </div>
             </div>
-
             <!-- PROPIETARIO -->
             <div class="tab-pane fade" id="pane-owner">
               <div class="row g-3">
@@ -131,7 +149,6 @@
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Unidades de Negocio</label>
-                  {# aquí quitamos los corchetes del name #}
                   <select name="business_units" multiple class="form-select select2-multiple">
                     {% for bu in business_units %}
                       <option value="{{ bu.id }}">{{ bu.name }}</option>
@@ -140,13 +157,11 @@
                 </div>
               </div>
             </div>
-
             <!-- CLASIFICACIÓN -->
             <div class="tab-pane fade" id="pane-class">
               <div class="row g-3">
                 <div class="col-md-6">
                   <label class="form-label">Etiquetas</label>
-                  {# idem aquí #}
                   <select name="labels" multiple class="form-select select2-multiple">
                     {% for tag in labels %}
                       <option value="{{ tag.id }}">{{ tag.name }}</option>
@@ -155,10 +170,8 @@
                 </div>
               </div>
             </div>
-
           </div>
         </div>
-
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
           <button type="submit" class="btn btn-primary">Guardar</button>

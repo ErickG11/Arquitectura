@@ -3,35 +3,63 @@
 {% block title %}Riesgos — Ciber-Riesgos{% endblock %}
 
 {% block content %}
-<div class="section-header mb-3">
-  <h2>Riesgos</h2>
-  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddRisk">
-    + Agregar Nuevo Riesgo
-  </button>
-</div>
+<div class="container risks-section">
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>ID</th><th>Amenaza</th><th>Vulnerabilidad</th>
-      <th>Prob</th><th>Imp</th><th>Activo</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for r in riesgos %}
-    <tr>
-      <td>{{ r.id }}</td>
-      <td>{{ r.amenaza }}</td>
-      <td>{{ r.vulnerabilidad }}</td>
-      <td>{{ r.probabilidad }}</td>
-      <td>{{ r.impacto }}</td>
-      <td>{{ r.activo_nombre }}</td>
-    </tr>
-    {% else %}
-    <tr><td colspan="6" class="text-center">No hay riesgos registrados.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <!-- Cabecera y botón -->
+  <div class="d-flex justify-content-between align-items-center mb-3 section-header">
+    <h2>Riesgos</h2>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddRisk">
+      + Agregar Nuevo Riesgo
+    </button>
+  </div>
+
+  <!-- Tabla de Riesgos -->
+  <table class="table table-hover table-striped">
+    <thead>
+      <tr>
+        <th>ID</th><th>Amenaza</th><th>Vulnerabilidad</th>
+        <th>Prob</th><th>Imp</th><th>Activo</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in riesgos %}
+      <tr>
+        <td>{{ r.id }}</td>
+        <td>{{ r.amenaza }}</td>
+        <td>{{ r.vulnerabilidad }}</td>
+        <td>{{ r.probabilidad }}</td>
+        <td>{{ r.impacto }}</td>
+        <td>{{ r.activo_nombre }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="6" class="text-center">No hay riesgos registrados.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Bloque informativo elegante -->
+  <div class="section-features mt-5">
+    <div class="feature">
+      <div class="feature-icon">⚠️</div>
+      <h5>¿Qué es un Riesgo?</h5>
+      <p>Un riesgo es la combinación de una amenaza y una vulnerabilidad que puede afectar negativamente a un activo. 
+      Este sistema te permite documentarlos, analizarlos y priorizarlos.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🎯</div>
+      <h5>Probabilidad e Impacto</h5>
+      <p>Asigna una probabilidad y un impacto (ambos 1–5) para calcular el nivel de riesgo inicial y tomar decisiones basadas en datos.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🛡️</div>
+      <h5>Mitigación</h5>
+      <p>Una vez identificado el riesgo, puedes definir controles y acciones de mitigación para reducir su nivel residual y proteger tus activos.</p>
+    </div>
+  </div>
+
+</div>
 
 <!-- Modal Agregar Riesgo -->
 <div class="modal fade" id="modalAddRisk" tabindex="-1">

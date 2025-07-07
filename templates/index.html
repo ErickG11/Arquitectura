@@ -1,6 +1,107 @@
 {% extends "base.html" %}
-{% block title %}Inicio - Ciber-Riesgos{% endblock %}
+{% block title %}Inicio — Ciber-Riesgos{% endblock %}
+
 {% block content %}
-  <h1>Bienvenido al Sistema de Gestión de Riesgos Cibernéticos</h1>
-  <p>Utiliza el menú para navegar.</p>
+<!-- Hero / Presentación -->
+<section class="hero">
+  <div class="container hero-content">
+    <h1 class="hero-title">Ciber-Riesgos</h1>
+    <p class="hero-subtitle">
+      Plataforma integral de inventario de activos y gestión de riesgos de ciberseguridad.
+    </p>
+    <p class="hero-text">
+      Identifica, evalúa y mitiga vulnerabilidades de tus sistemas. Genera
+      reportes dinámicos, matrices de riesgo y gráficos para tomar
+      decisiones informadas y proteger tu organización.
+    </p>
+    <div class="hero-cta">
+      <a href="{{ url_for('assets.get_all_assets_page') }}" class="btn btn-primary btn-lg me-3">
+        Ver Activos
+      </a>
+      <a href="{{ url_for('risks.list_risks_page') }}" class="btn btn-outline-light btn-lg">
+        Ver Riesgos
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Características principales -->
+<section class="features container">
+  <div class="feature">
+    <i class="bi bi-file-earmark-text feature-icon"></i>
+    <h3>Inventario Completo</h3>
+    <p>
+      Registra activos de hardware, software, datos y más.  
+      Controla atributos críticos en un mismo lugar.
+    </p>
+  </div>
+  <div class="feature">
+    <i class="bi bi-shield-lock feature-icon"></i>
+    <h3>Evaluación de Riesgos</h3>
+    <p>
+      Define amenazas, calcula niveles de riesgo y
+      obtén alertas sobre los más críticos.
+    </p>
+  </div>
+  <div class="feature">
+    <i class="bi bi-bar-chart-line feature-icon"></i>
+    <h3>Reportes Dinámicos</h3>
+    <p>
+      Genera PDFs con gráficos profesionales,
+      matrices de riesgo y conclusiones automáticas.
+    </p>
+  </div>
+</section>
+
+<!-- Cómo Funciona -->
+<section class="how-it-works container">
+  <h2 class="section-title">¿Cómo Funciona?</h2>
+  <div class="steps">
+    <div class="step">
+      <span class="step-number">1</span>
+      <h4>Agregar Activos</h4>
+      <p>
+        Crea y clasifica tus activos con niveles de
+        confidencialidad, integridad y disponibilidad.
+      </p>
+    </div>
+    <div class="step">
+      <span class="step-number">2</span>
+      <h4>Definir Riesgos</h4>
+      <p>
+        Asocia amenazas y vulnerabilidades para
+        cada activo y determina su probabilidad e impacto.
+      </p>
+    </div>
+    <div class="step">
+      <span class="step-number">3</span>
+      <h4>Analizar Resultados</h4>
+      <p>
+        Visualiza gráficos de valor crítico y matrices
+        de riesgo global para priorizar mitigaciones.
+      </p>
+    </div>
+    <div class="step">
+      <span class="step-number">4</span>
+      <h4>Generar Reportes</h4>
+      <p>
+        Descarga informes PDF detallados con todo el
+        análisis y compártelos con tu equipo.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Llamada a la acción final -->
+<section class="cta-dark text-center">
+  <div class="container">
+    <h2 class="cta-title">Empieza hoy mismo</h2>
+    <p class="cta-text">
+      Simplifica tu gestión de riesgos de ciberseguridad y protege tus activos.
+    </p>
+    <a href="{{ url_for('assets.get_all_assets_page') }}" class="btn btn-lg btn-primary">
+      Comenzar Ahora
+    </a>
+  </div>
+</section>
 {% endblock %}
