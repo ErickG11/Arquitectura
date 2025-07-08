@@ -5,7 +5,12 @@ import json
 def callback(ch, method, properties, body):
     try:
         data = json.loads(body)
-        print(f"[NOTIFICACIÓN] Riesgo crítico recibido: {data}")
+        amenaza = data.get("amenaza", "N/A")
+        nivel = data.get("probabilidad", 0) * data.get("impacto", 0)
+        print(f"[NOTIFICACIÓN] ¡Riesgo crítico detectado!")
+        print(f"  Amenaza: {amenaza}")
+        print(f"  Nivel: {nivel}")
+        print(f"  Detalles: {data}")
     except Exception as e:
         print(f"[ERROR] Al procesar el mensaje: {e}")
 

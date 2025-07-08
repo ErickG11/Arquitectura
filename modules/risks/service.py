@@ -35,10 +35,13 @@ def crear_riesgo(form: dict) -> None:
     session.add(r)
     session.commit()
 
-    # Creamos el diccionario ANTES de cerrar la sesión
     riesgo_dict = r.to_dict()
     session.close()
 
-    # Publica siempre al crear un riesgo
-    publicar_evento_riesgo_critico(riesgo_dict)
+    # Define umbral crítico
+    nivel = probabilidad * impacto
+    UMBRAL_CRITICO = 15  # O ajusta según tu análisis
 
+    # Solo publica si el riesgo es crítico
+    if nivel >= UMBRAL_CRITICO:
+        publicar_evento_riesgo_critico(riesgo_dict)
