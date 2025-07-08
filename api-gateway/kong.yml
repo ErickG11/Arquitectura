@@ -7,7 +7,7 @@ services:
         paths:
           - /
         strip_path: false
-    
+
       - name: assets
         paths:
           - /assets
@@ -25,10 +25,9 @@ services:
           - /static
           - /static/
         strip_path: false
-      
+
       - name: reports
         paths:
-          - /reports
           - /reports
         strip_path: false
 
@@ -43,18 +42,27 @@ services:
           - /reports/download
           - /reports/download/
         strip_path: false
-      
-      
 
+      - name: reports_download_proxy
+        paths:
+          - /reports/download/proxy
+          - /reports/download/proxy/
+        strip_path: false
 
 
   - name: microservicio-reportes
     url: http://microservicio-reportes:8000
     routes:
+      - name: report_generate
+        paths:
+          - /report/generate
+          - /report/generate/
+        strip_path: false
       - name: report
         paths:
           - /report
           - /report/
         strip_path: false
+
 
 

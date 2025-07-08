@@ -6,12 +6,12 @@ from sqlalchemy.orm import sessionmaker
 # Datos de conexión según tu captura
 USER = "userpy"
 PASSWORD = "12345hola"
-SERVER = ""
+SERVER = "192.168.1.250"
 DATABASE = "CiberRiesgosDB"
 DRIVER = "ODBC+Driver+17+for+SQL+Server"
 
 CONN_STR = (
-    "mssql+pyodbc://userpy:12345hola@:1433/CiberRiesgosDB"
+    "mssql+pyodbc://userpy:12345hola@192.168.1.250:1433/CiberRiesgosDB"
     "?driver=ODBC+Driver+17+for+SQL+Server"
     "&timeout=30"
 )

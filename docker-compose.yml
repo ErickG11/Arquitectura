@@ -6,24 +6,32 @@ services:
     container_name: monolito
     depends_on:
       - rabbitmq
+    networks:
+      - backend
 
   microservicio-reportes:
     build: ./microservicio-reportes
     container_name: microservicio-reportes
     depends_on:
       - rabbitmq
+    networks:
+      - backend
 
   microservicio-notificaciones:
     build: ./microservicio-notificaciones
     container_name: microservicio-notificaciones
     depends_on:
       - rabbitmq
+    networks:
+      - backend
 
   rabbitmq:
     image: "rabbitmq:3-management"
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - backend
 
   kong:
     image: kong:latest
@@ -38,3 +46,9 @@ services:
     depends_on:
       - monolito
       - microservicio-reportes
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

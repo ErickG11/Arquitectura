@@ -1,4 +1,7 @@
 import os
+import requests
+import json
+from flask import Response
 from flask       import Flask, render_template, request, redirect, url_for, send_file
 import matplotlib.pyplot    as plt
 import numpy               as np
@@ -164,6 +167,31 @@ def report_download():
     c.save()
 
     return send_file(pdf_path, as_attachment=True)
+
+@app.route("/reports/download/proxy")
+def download_report_proxy():
+    activos = lista_activos()
+    riesgos = lista_riesgos()
+
+    url_microservicio = "http://microservicio-reportes:8000/report/generate"
+
+    # No enviamos archivos, solo los datos
+    data = {
+        "activos": json.dumps(activos),
+        "riesgos": json.dumps(riesgos),
+        "fecha": "2025-07-06",
+        "autor": "Usuario",
+    }
+    response = requests.post(url_microservicio, data=data)
+    
+    # Guarda PDF temporal para enviar al usuario
+    pdf_dir = os.path.join(app.static_folder, "reports")
+    os.makedirs(pdf_dir, exist_ok=True)
+    temp_path = os.path.join(pdf_dir, "informe_ciber_riesgos_tmp.pdf")
+    with open(temp_path, "wb") as f:
+        f.write(response.content)
+
+    return send_file(temp_path, as_attachment=True)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, debug=True)
