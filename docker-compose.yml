@@ -6,12 +6,23 @@ services:
     container_name: monolito
     depends_on:
       - rabbitmq
+      - redis
     networks:
       - backend
 
-  microservicio-reportes:
+  # Instancia 1 de microservicio-reportes
+  microservicio-reportes-1:
     build: ./microservicio-reportes
-    container_name: microservicio-reportes
+    container_name: microservicio-reportes-1
+    depends_on:
+      - rabbitmq
+    networks:
+      - backend
+
+  # Instancia 2 de microservicio-reportes
+  microservicio-reportes-2:
+    build: ./microservicio-reportes
+    container_name: microservicio-reportes-2
     depends_on:
       - rabbitmq
     networks:
@@ -45,7 +56,15 @@ services:
       - "9001:8001"    # admin API Kong
     depends_on:
       - monolito
-      - microservicio-reportes
+      - microservicio-reportes-1
+      - microservicio-reportes-2
+    networks:
+      - backend
+
+  # Redis para cacheo (extra)
+  redis:
+    image: redis:alpine
+    container_name: redis
     networks:
       - backend
 

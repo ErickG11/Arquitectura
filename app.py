@@ -1,6 +1,8 @@
 import os
 import requests
 import json
+import redis
+import hashlib
 from flask import Response
 from flask       import Flask, render_template, request, redirect, url_for, send_file
 import matplotlib.pyplot    as plt
@@ -168,12 +170,14 @@ def report_download():
 
     return send_file(pdf_path, as_attachment=True)
 
+r = redis.Redis(host='redis', port=6379, db=0)
+
 @app.route("/reports/download/proxy")
 def download_report_proxy():
     activos = lista_activos()
     riesgos = lista_riesgos()
 
-    url_microservicio = "http://microservicio-reportes:8000/report/generate"
+    url_microservicio = "http://microservicio-reportes-1:8000/report/generate"
 
     # No enviamos archivos, solo los datos
     data = {

@@ -12,3 +12,4 @@ fastapi
 pika
 requests
 python-multipart
+redis
