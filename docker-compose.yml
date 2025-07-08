@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  monolito:
+    build: .
+    container_name: monolito
+    ports:
+      - "5001:5001"
+    depends_on:
+      - rabbitmq
+
+  microservicio-reportes:
+    build: ./microservicio-reportes
+    container_name: microservicio-reportes
+    ports:
+      - "8000:8000"
+    depends_on:
+      - rabbitmq
+
+  microservicio-notificaciones:
+    build: ./microservicio-notificaciones
+    container_name: microservicio-notificaciones
+    depends_on:
+      - rabbitmq
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  kong:
+    image: kong:latest
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong.yml
+    volumes:
+      - ./api-gateway/kong.yml:/kong.yml
+    ports:
+      - "9000:8000"    # proxy de servicios
+      - "9001:8001"    # admin API Kong
+    depends_on:
+      - monolito
+      - microservicio-reportes

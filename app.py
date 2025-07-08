@@ -23,6 +23,8 @@ from modules.risks.service    import lista_riesgos
 app = Flask(__name__)
 app.register_blueprint(assets_bp, url_prefix="/assets")
 app.register_blueprint(risks_bp,  url_prefix="/risks")
+app.url_map.strict_slashes = False
+
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -164,4 +166,4 @@ def report_download():
     return send_file(pdf_path, as_attachment=True)
 
 if __name__ == "__main__":
-    app.run(debug=True, host="127.0.0.1", port=5000)
+    app.run(host='0.0.0.0', port=5001, debug=True)

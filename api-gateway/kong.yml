@@ -1,0 +1,34 @@
+_format_version: "2.1"
+services:
+  - name: monolito
+    url: http://monolito:5001
+    routes:
+      - name: assets
+        paths:
+          - /assets
+          - /assets/
+        strip_path: false
+
+      - name: risks
+        paths:
+          - /risks
+          - /risks/
+        strip_path: false
+
+      - name: static
+        paths:
+          - /static
+          - /static/
+        strip_path: false
+
+
+
+  - name: microservicio-reportes
+    url: http://microservicio-reportes:8000
+    routes:
+      - name: reportes
+        paths:
+          - /report
+        strip_path: false
+
+
