@@ -1,73 +1,136 @@
-version: "3.8"
+# docker-compose.yml
 
+# La directiva 'version' es obsoleta en las versiones recientes de Docker Compose.
+# Se recomienda eliminarla para evitar advertencias.
+# version: "3.8" # <-- Eliminada
+
+# Definición de los servicios de la aplicación
 services:
+
+  # --- Base de Datos para Kong (PostgreSQL) ---
+  kong-database:
+    image: postgres:13 # Imagen oficial de PostgreSQL
+    container_name: kong-database # Nombre explícito del contenedor
+    environment:
+      POSTGRES_DB: kong
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: kong
+    volumes:
+      - kong-data:/var/lib/postgresql/data # Persistencia de datos para Kong
+    networks:
+      - backend # Red interna para la comunicación entre servicios
+    restart: unless-stopped # Reiniciar automáticamente a menos que se detenga manualmente
+
+  # --- Migraciones de la Base de Datos de Kong ---
+  # Este servicio ejecuta las migraciones de la base de datos de Kong al inicio.
+  # Se ejecuta una sola vez y luego se detiene.
+  kong-migrate:
+    image: kong:latest # Usar la misma imagen de Kong
+    container_name: kong-migrate # Nombre explícito del contenedor
+    command: kong migrations bootstrap # Comando para inicializar la base de datos de Kong
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database # Conectarse al servicio de base de datos
+      KONG_PG_PASSWORD: kong
+    depends_on:
+      - kong-database # Asegurarse de que la base de datos esté lista
+    networks:
+      - backend
+    # Este servicio no necesita 'restart: unless-stopped' ya que es una tarea de una sola vez.
+
+  # --- Gateway API Kong ---
+  kong:
+    image: kong:latest # Imagen oficial de Kong
+    container_name: kong # Nombre explícito del contenedor
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_PASSWORD: kong
+      # Configuración de logs para ver la actividad de Kong
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001 # Puerto interno para la API de administración de Kong
+    depends_on:
+      - kong-migrate # Asegurarse de que las migraciones se hayan completado
+      - microservicio-reportes-1 # Dependencia para que Kong espere a que los microservicios estén listos
+      - microservicio-reportes-2
+      - monolito
+    ports:
+      - "9000:8000" # Mapeo del puerto proxy de Kong (externo:interno)
+      - "9001:8001" # Mapeo del puerto de administración de Kong (externo:interno)
+    networks:
+      - backend
+    restart: unless-stopped
+
+  # --- Monolito (Aplicación Principal) ---
   monolito:
-    build: .
-    container_name: monolito
+    build: . # Construir la imagen desde el Dockerfile en el directorio actual
+    container_name: monolito # Nombre explícito del contenedor
     depends_on:
-      - rabbitmq
-      - redis
+      - rabbitmq # Depende de RabbitMQ para mensajería
+      - redis # Depende de Redis para caché/sesiones
     networks:
       - backend
+    env_file: # Cargar variables de entorno del monolito (ej. URL del microservicio de reportes)
+      - .env
+    restart: unless-stopped
 
-  # Instancia 1 de microservicio-reportes
+  # --- Microservicio de Generación de Reportes (Instancia 1) ---
   microservicio-reportes-1:
-    build: ./microservicio-reportes
-    container_name: microservicio-reportes-1
-    depends_on:
-      - rabbitmq
+    build: ./microservicio-reportes # Construir la imagen desde su Dockerfile
+    container_name: microservicio-reportes-1 # Nombre explícito del contenedor
     networks:
       - backend
+    restart: unless-stopped
+    # No necesita env_file aquí a menos que tenga su propia configuración específica
 
-  # Instancia 2 de microservicio-reportes
+  # --- Microservicio de Generación de Reportes (Instancia 2) ---
+  # Segunda instancia para simular escalabilidad/balanceo de carga detrás de Kong
   microservicio-reportes-2:
     build: ./microservicio-reportes
     container_name: microservicio-reportes-2
-    depends_on:
-      - rabbitmq
     networks:
       - backend
+    restart: unless-stopped
 
+  # --- Microservicio de Notificaciones ---
   microservicio-notificaciones:
-    build: ./microservicio-notificaciones
-    container_name: microservicio-notificaciones
+    build: ./microservicio-notificaciones # Construir la imagen desde su Dockerfile
+    container_name: microservicio-notificaciones # Nombre explícito del contenedor
     depends_on:
-      - rabbitmq
+      - rabbitmq # Depende de RabbitMQ para consumir mensajes
     networks:
       - backend
+    env_file: # Cargar variables de entorno para el envío de correos
+      - .env
+    restart: unless-stopped
 
+  # --- Broker de Mensajes (RabbitMQ) ---
   rabbitmq:
-    image: "rabbitmq:3-management"
+    image: "rabbitmq:3-management" # Imagen oficial con interfaz de administración
+    container_name: rabbitmq # Nombre explícito del contenedor
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "5672:5672" # Puerto estándar de AMQP
+      - "15672:15672" # Puerto para la interfaz de administración (Web UI)
     networks:
       - backend
+    restart: unless-stopped
 
-  kong:
-    image: kong:latest
-    environment:
-      KONG_DATABASE: "off"
-      KONG_DECLARATIVE_CONFIG: /kong.yml
-    volumes:
-      - ./api-gateway/kong.yml:/kong.yml
-    ports:
-      - "9000:8000"    # proxy de servicios
-      - "9001:8001"    # admin API Kong
-    depends_on:
-      - monolito
-      - microservicio-reportes-1
-      - microservicio-reportes-2
-    networks:
-      - backend
-
-  # Redis para cacheo (extra)
+  # --- Base de Datos en Memoria (Redis) ---
   redis:
-    image: redis:alpine
-    container_name: redis
+    image: redis:alpine # Imagen ligera de Redis
+    container_name: redis # Nombre explícito del contenedor
     networks:
       - backend
+    restart: unless-stopped
 
+# Definición de volúmenes para persistencia de datos
+volumes:
+  kong-data: # Volumen para los datos de la base de datos de Kong
+
+# Definición de redes para la comunicación entre servicios
 networks:
   backend:
-    driver: bridge
+    driver: bridge # Tipo de red por defecto para Docker Compose

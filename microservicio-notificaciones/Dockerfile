@@ -1,9 +1,14 @@
+# microservicio-notificaciones/Dockerfile
 FROM python:3.10-slim
 
 WORKDIR /app
 
-COPY . .
+# Copia el archivo de requisitos e instala las dependencias
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install pika
+# Copia el archivo principal del microservicio
+COPY main.py .
 
-CMD ["python", "main.py"]
+# Comando para iniciar la aplicación. El flag -u es crucial para ver los logs en tiempo real.
+CMD ["python", "-u", "main.py"]
