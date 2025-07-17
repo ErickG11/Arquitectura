@@ -1,7 +1,0 @@
-version: '3.8'
-
-services:
-  sqlcmd:
-    image: mcr.microsoft.com/mssql-tools
-    entrypoint: /bin/bash
-    tty: true

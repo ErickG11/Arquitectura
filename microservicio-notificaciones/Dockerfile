@@ -3,12 +3,15 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Copia el archivo de requisitos e instala las dependencias
+# Copiar e instalar dependencias
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia el archivo principal del microservicio
+# Copiar toda la estructura del microservicio
 COPY main.py .
+COPY consumer/ consumer/
+COPY mailer/ mailer/
+COPY config/ config/
 
-# Comando para iniciar la aplicación. El flag -u es crucial para ver los logs en tiempo real.
+# Comando de arranque
 CMD ["python", "-u", "main.py"]
